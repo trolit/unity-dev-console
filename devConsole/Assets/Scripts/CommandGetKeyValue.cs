@@ -27,7 +27,7 @@ namespace Console
         {
             if (data.Length == 3)
             {
-                var type = data[1];
+                var type = data[1].ToLower();
                 var keyName = data[2];
 
                 if (type == "int")
@@ -40,6 +40,12 @@ namespace Console
                 {
                     var value = PlayerPrefs.GetFloat(keyName);
                     
+                    AddStaticMessageToConsole($"<color={WarningColor}>returned val =></color> {value}");
+                }
+                else if (type == "string")
+                {
+                    var value = PlayerPrefs.GetString(keyName);
+
                     AddStaticMessageToConsole($"<color={WarningColor}>returned val =></color> {value}");
                 }
                 else

@@ -35,17 +35,20 @@ namespace Console
 
         public static Dictionary<string, ConsoleCommand> Commands { get; set; }
 
-        public Canvas ConsoleCanvas;
+        [SerializeField]
+        private Canvas _consoleCanvas;
 
-        public ScrollRect ScrollRect;
+        [SerializeField]
+        private ScrollRect _scrollRect;
 
-        public Text ConsoleText;
+        [SerializeField]
+        private Text _consoleText;
 
-        public Text InputText;
+        [SerializeField]
+        private Text _inputText;
 
-        public InputField ConsoleInput;
-
-        private int _consoleState;
+        [SerializeField]
+        private InputField _consoleInput;
 
         #region Colors
 
@@ -59,7 +62,7 @@ namespace Console
 
         #endregion
 
-        #region Console Messages
+        #region Typical Console Messages
 
         public static string NotRecognized = $"Command not <color={WarningColor}>recognized</color>!";
 
@@ -88,12 +91,12 @@ namespace Console
 
         private void Start()
         {
-            ConsoleCanvas.gameObject.SetActive(false);
+            _consoleCanvas.gameObject.SetActive(false);
 
             var pink = "#FE1862";
             var blue = "#7DBBEF";
 
-            ConsoleText.text = "---------------------------------------------------------------------------------\n" +
+            _consoleText.text = "---------------------------------------------------------------------------------\n" +
                                $"<size=30><color={pink}>Unity Developer Console</color></size> \n" +
                                $"made by <color={pink}><b><size=19>Joey The Lantern</size></b></color>\n" +
                                $"<color={blue}><size=11><i>https://github.com/joeythelantern</i></size></color> \n" +
@@ -130,35 +133,35 @@ namespace Console
         {
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
-                ConsoleCanvas.gameObject.SetActive
-                    (!ConsoleCanvas.gameObject.activeInHierarchy);
+                _consoleCanvas.gameObject.SetActive
+                    (!_consoleCanvas.gameObject.activeInHierarchy);
 
-                ConsoleInput.ActivateInputField();
-                ConsoleInput.Select();
+                _consoleInput.ActivateInputField();
+                _consoleInput.Select();
             }
 
-            if (ConsoleCanvas.gameObject.activeInHierarchy)
+            if (_consoleCanvas.gameObject.activeInHierarchy)
             {
                 if (Input.GetKeyDown(KeyCode.Return))
                 {
-                    if (string.IsNullOrEmpty(InputText.text) == false)
+                    if (string.IsNullOrEmpty(_inputText.text) == false)
                     {
-                        AddMessageToConsole(InputText.text);
+                        AddMessageToConsole(_inputText.text);
 
-                        ParseInput(InputText.text);
+                        ParseInput(_inputText.text);
                     }
 
                     // Clears input
-                    ConsoleInput.text = "";
+                    _consoleInput.text = "";
 
-                    ConsoleInput.ActivateInputField();
-                    ConsoleInput.Select();
+                    _consoleInput.ActivateInputField();
+                    _consoleInput.Select();
                 }
             }
 
-            if (ConsoleCanvas.gameObject.activeInHierarchy == false)
+            if (_consoleCanvas.gameObject.activeInHierarchy == false)
             {
-                ConsoleInput.text = "";
+                _consoleInput.text = "";
             }
 
         }
@@ -166,22 +169,21 @@ namespace Console
         private IEnumerator ScrollDown()
         {
             yield return new WaitForSeconds(0.1f);
-            ScrollRect.verticalNormalizedPosition = 0f;
+            _scrollRect.verticalNormalizedPosition = 0f;
         }
 
         private void AddMessageToConsole(string msg)
         {
-            ConsoleText.text += msg + "\n";
+            _consoleText.text += msg + "\n";
         }
 
         public static void AddStaticMessageToConsole(string msg)
         {
-            Instance.ConsoleText.text += msg + "\n";
+            Instance._consoleText.text += msg + "\n";
         }
 
         private void ParseInput(string input)
         {
-            // Separate string by whitespace (==null)
             string[] commandSplitInput = input.Split(null);
 
             if (string.IsNullOrWhiteSpace(input))
@@ -190,7 +192,6 @@ namespace Console
                 return;
             }
 
-            // If first word isn't command from Commands Dictionary
             if (Commands.ContainsKey(commandSplitInput[0]) == false)
             {
                 AddMessageToConsole(NotRecognized);
@@ -200,6 +201,7 @@ namespace Console
                 Commands[commandSplitInput[0]].RunCommand(commandSplitInput);
             }
 
+            // Force scroll
             StartCoroutine(ScrollDown());
         }
     }
