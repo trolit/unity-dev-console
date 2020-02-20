@@ -17,7 +17,7 @@ Repository consists of Unity project with one template scene allowing to test co
 </p>
 
 <p align="justify">
-Take a look at code fragment above. The possibility to pass parameters is due to adding parameter to procedure RunCommand, string[] data (see line 26). How to process passed data? Well, before that keep strongly in mind that resolving it that way requires you to be careful on index reference and popular "out of range" problem. On each index you will find whole command cut into pieces. Check following image. 
+Take a look at code fragment above. The possibility to pass parameters is due to adding parameter to procedure RunCommand, string[] data (see line 26). How to process passed data? Well, before that, keep strongly in mind that resolving parameters passing that way requires you to be careful on index reference and popular "out of range" problem. On each index you will find whole command cut into pieces. Check following image. 
 </p>
 
 <p align="center">
@@ -25,18 +25,11 @@ Take a look at code fragment above. The possibility to pass parameters is due to
 </p>
 
 <p align="justify">
-Imagine that you want to get the value of the PlayerPrefs key. To do this you need from user to specify first in which type that key is saved. After you get this, you can extract that information and make proper conditionals like in first image. Remember that if you work on array you have fixed length. It is worth to feed all cases that can happen. With getting key value you can cover string, float, int and situation in which your data consists of more than 3 elements: command, type, key. If you want to change scene you need to be aware that before you use LoadSceneAsync(int sceneBuildIndex) you have to extract text under data[1] which stands for identity and convert it into expected type. Instead of making two scripts: <em>loadById</em> and <em>loadByName</em> in repository you will find one that cover both situations but first checks whether user passed Id or scene name.   
+Imagine that you want to get the value of the PlayerPrefs key (first example). To do this you need from user to specify first in which type that key is saved. After you get this, you can extract that information and make proper conditionals like in first image. Remember that if you work on array you have fixed length. It is worth to feed all cases that can happen to prevent critical errors. With getting key value you can cover string, float, int and situation in which your data consists of more than 3 elements (command, type, key). If you want to change scene (second example) you need to be aware that before you use LoadSceneAsync(int sceneBuildIndex), you have to extract text under data[1], which stands for identity, then convert it into expected type (using for example <em>Convert.ToInt32(param)</em>). Instead of making two scripts: <em>loadById</em> and <em>loadByName</em> in repository you will find one - <strong>CommandLoadScene</strong> that cover both situations where first check handles whether user passed Id or scene name.   
 </p>
 
-
-
 ## Authors
-- Joey The Lantern, <a href="https://github.com/joeythelantern">homepage</a>
-- trolit, <a href="https://trolit.github.io/">homepage</a>
+- Joey The Lantern, <a href="https://github.com/joeythelantern" target="_blank">github</a>, <a href="https://www.youtube.com/channel/UCmG1UbEI0iFE1tAw2SyvvXg" target="_blank">youtube channel</a>
+- trolit, <a href="https://trolit.github.io/">github</a>
 
-
-Follow Joe The Lantern tutorial over here:
-https://www.youtube.com/watch?v=ztG10Z00HKM&t=1328s
-
-
-Then...
+Joey's Unity Developer Console series <a href="https://www.youtube.com/watch?v=ztG10Z00HKM&list=PLdSnLYEzOTtrlPwmaYkkPmRYMrVRDVeTI&index=1" target="_blank">is available here</a>
