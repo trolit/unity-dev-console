@@ -7,7 +7,7 @@
 
 ## Repository info
 <p align="justify">
-Repository consists of Unity project with one template scene allowing to test console and scripts directory. I left some example commands which I found very useful in my team project for engineering thesis so take a look at them! Project was created on Unity Unity 2018.3.12f1.
+Repository consists of Unity project with one template scene allowing to test console and scripts directory. I left some example commands which I found very useful in my team project for engineering thesis so take a look at them! Project was created on Unity 2018.3.12f1.
 </p>
 
 ## How passing parameters work?
