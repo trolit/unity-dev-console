@@ -7,7 +7,7 @@
 
 ## Repository info
 <p align="justify">
-Repository consists of Unity project with one template scene allowing to test console and scripts directory. I left some example commands which I found very useful in my team project for engineering thesis so take a look at them! Project was created on Unity 2018.3.12f1.
+Repository consists of Unity project with one template scene allowing to test console and scripts directory. I left some example commands which I found very useful in my team project for engineering thesis so take a look at them! Project was created on Unity 2018.3.12f1. I also tested it on 4th march, 2020 on Unity 2019.3.3f1 (64-bit). After upgrading version of devConsole project I did not have any errors, only some warnings. Ran project without any problems.
 </p>
 
 ## How passing parameters work?
