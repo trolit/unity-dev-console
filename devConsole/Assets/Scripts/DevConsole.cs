@@ -133,6 +133,8 @@ namespace Console
             var commandClearList = CommandClearConsole.CreateCommand();
             commandClearList.ConsoleTextRef = _consoleText;
             commandClearList.ConsoleStartingInfo = _consoleText.text;
+
+            CommandSetPlayerSpeed.CreateCommand();
         }
 
         public static void AddCommandsToConsole(string name, ConsoleCommand command)
