@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -57,6 +58,10 @@ namespace Console
         private int _clipboardIndexer = 0;
 
         private int _clipboardCursor = 0;
+
+        [SerializeField]
+        [Tooltip("Specify minimum amount of characters for autocomplete key(TAB) to work.")]
+        private int _tabMinCharLength = 3;
 
         #region Colors
 
@@ -215,13 +220,34 @@ namespace Console
                         }
                     }
                 }
+
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    int inputLength = _consoleInput.text.Length;
+                    
+                    if(inputLength >= _tabMinCharLength && _consoleInput.text.Any(char.IsWhiteSpace) == false)
+                    {
+                        foreach (var command in Commands)
+                        {
+                            string commandKey =
+                                command.Key.Length <= inputLength ? command.Key : command.Key.Substring(0, inputLength);
+
+                            if (_consoleInput.text.ToLower().StartsWith(commandKey.ToLower()))
+                            {
+                                _consoleInput.text = command.Key;
+                                
+                                _consoleInput.caretPosition = command.Key.Length;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 
             if (_consoleCanvas.gameObject.activeInHierarchy == false)
             {
                 _consoleInput.text = "";
             }
-
         }
 
         private IEnumerator ScrollDown()
