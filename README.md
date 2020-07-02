@@ -13,7 +13,7 @@ Repository consists of Unity project with one template scene allowing to test co
 ## How passing parameters work?
 
 <p align="center">
-<img src="https://github.com/trolit/unity-dev-console/blob/master/images/codeFrag.PNG" alt="Code fragment" width="780px"></img>
+<img src="https://raw.githubusercontent.com/trolit/unity-dev-console/images/images/codeFrag.PNG" alt="Code fragment" width="580px"></img>
 </p>
 
 <p align="justify">
@@ -21,7 +21,7 @@ Take a look at code fragment above. The possibility to pass parameters is due to
 </p>
 
 <p align="center">
-<img src="https://github.com/trolit/unity-dev-console/blob/master/images/examples.PNG" alt="Examples" width="780px"></img>
+<img src="https://raw.githubusercontent.com/trolit/unity-dev-console/images/images/examples.PNG" alt="Examples" width="580px"></img>
 </p>
 
 <p align="justify">
@@ -30,7 +30,7 @@ Imagine that you want to get the value of the PlayerPrefs key (first example, le
 
 ## Presentation
 <p align="center">
-<img src="https://github.com/trolit/unity-dev-console/blob/master/images/ezgif.gif" alt="Gif generated from https://ezgif.com" width="780px"></img>
+<img src="https://raw.githubusercontent.com/trolit/unity-dev-console/images/images/ezgif.gif" alt="Gif generated from https://ezgif.com" width="780px"></img>
 </p>
 
 ## Changelog
