@@ -19,7 +19,6 @@ namespace Console
             Help = "Syntax: get <type> <key> \n" +
                    $"<color={RequiredColor}>All parameters are required!</color>"; ;
             Example = "get int money";
-
             AddCommandToConsole();
         }
 
@@ -30,23 +29,25 @@ namespace Console
                 var type = data[1].ToLower();
                 var keyName = data[2];
 
+                var returnedValMsg = $"<color={WarningColor}>returned value -></color> ";
+
                 if (type == "int")
                 {
                     var value = PlayerPrefs.GetInt(keyName);
 
-                    AddStaticMessageToConsole($"<color={WarningColor}>returned val =></color> {value}");
+                    AddStaticMessageToConsole(returnedValMsg + value);
                 }
                 else if (type == "float")
                 {
                     var value = PlayerPrefs.GetFloat(keyName);
-                    
-                    AddStaticMessageToConsole($"<color={WarningColor}>returned val =></color> {value}");
+
+                    AddStaticMessageToConsole(returnedValMsg + value);
                 }
                 else if (type == "string")
                 {
                     var value = PlayerPrefs.GetString(keyName);
 
-                    AddStaticMessageToConsole($"<color={WarningColor}>returned val =></color> {value}");
+                    AddStaticMessageToConsole(returnedValMsg + value);
                 }
                 else
                 {
