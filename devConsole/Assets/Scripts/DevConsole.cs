@@ -112,13 +112,17 @@ namespace Console
 
         private void CreateCommands()
         {
-            var commandHelp = CommandHelp.CreateCommand();
+            CommandHelp.CreateCommand();
+            
+            CommandGetKeyValue.CreateCommand();
 
-            var commandGetKeyValue = CommandGetKeyValue.CreateCommand();
+            CommandLoadScene.CreateCommand();
 
-            var commandLoadScene = CommandLoadScene.CreateCommand();
+            CommandSceneList.CreateCommand();
 
-            var commandSceneList = CommandSceneList.CreateCommand();
+            var commandClearList = CommandClearConsole.CreateCommand();
+            commandClearList.ConsoleTextRef = _consoleText;
+            commandClearList.ConsoleStartingInfo = _consoleText.text;
         }
 
         public static void AddCommandsToConsole(string name, ConsoleCommand command)
