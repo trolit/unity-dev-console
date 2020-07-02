@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,10 +20,8 @@ namespace Console
 
         public void AddCommandToConsole()
         {
-            // string addMessage = " command has been added to the console.";
-
             DevConsole.AddCommandsToConsole(Command, this);
-
+            // string addMessage = " command has been added to the console.";
             // DevConsole.AddStaticMessageToConsole(Name + addMessage);
         }
 
@@ -50,6 +49,20 @@ namespace Console
         [SerializeField]
         private InputField _consoleInput;
 
+        [SerializeField]
+        [Tooltip("Define how many commands can be hold in the clipboard. If set to 0, clipboard will be off.")]
+        private int _clipboardSize;
+
+        private string[] _clipboard;
+
+        private int _clipboardIndexer = 0;
+
+        private int _clipboardCursor = 0;
+
+        [SerializeField]
+        [Tooltip("Specify minimum amount of characters for autocomplete key(TAB) to work.")]
+        private int _tabMinCharLength = 3;
+
         #region Colors
 
         public static string RequiredColor = "#FA8072";
@@ -64,17 +77,18 @@ namespace Console
 
         #region Typical Console Messages
 
-        public static string NotRecognized = $"Command not <color={WarningColor}>recognized</color>!";
+        public static string NotRecognized = $"Command not <color={WarningColor}>recognized</color>";
 
         public static string ExecutedSuccessfully = $"Command executed <color={ExecutedColor}>successfully</color>";
 
         public static string ParametersAmount = $"Wrong <color={WarningColor}>amount of parameters</color>";
 
-        public static string TypeNotSupported = $"Type of command <color={WarningColor}>not supported</color>!";
+        public static string TypeNotSupported = $"Type of command <color={WarningColor}>not supported</color>";
 
-        public static string SceneNotFound = $"Scene <color={WarningColor}>not found</color>!" +
-                                             $" Make sure that you have placed it inside <color={WarningColor}>build settings</color>.";       
+        public static string SceneNotFound = $"Scene <color={WarningColor}>not found</color>." +
+                                             $" Make sure that you have placed it inside <color={WarningColor}>build settings</color>";
 
+        public static string ClipboardCleared = $"\nConsole clipboard <color={OptionalColor}>cleared</color>";
         #endregion
 
         private void Awake()
@@ -91,34 +105,41 @@ namespace Console
 
         private void Start()
         {
+            _clipboard = new string[_clipboardSize];
+
             _consoleCanvas.gameObject.SetActive(false);
 
-            var pink = "#FE1862";
-            var blue = "#7DBBEF";
+            var primary = "#F9F0E6";
+            var secondary = "#B3E6F9";
 
             _consoleText.text = "---------------------------------------------------------------------------------\n" +
-                               $"<size=30><color={pink}>Unity Developer Console</color></size> \n" +
-                               $"made by <color={pink}><b><size=19>Joey The Lantern</size></b></color>\n" +
-                               $"<color={blue}><size=11><i>https://github.com/joeythelantern</i></size></color> \n" +
-                               "<size=10>find more on <b>Joey The Lantern</b> youtube coding channel</size> \n \n" +
-                               $"modified by <color={pink}><b><size=15>trolit</size></b></color>\n" +
-                               $"<color={blue}><size=11><i>https://github.com/trolit</i></size></color> \n" +
-                               "---------------------------------------------------------------------------------\n" +
+                               $"<size=30><color={primary}>Unity Developer Console</color></size> \n" +
+                               $"made by <color={primary}><b><size=19>Joey The Lantern</size></b></color>\n" +
+                               $"<color={secondary}><size=11><i>https://github.com/joeythelantern</i></size></color> \n" +
+                               "<size=10>find more on <b>Joey The Lantern</b> youtube channel</size> \n \n" +
+                               $"modified by <color={primary}><b><size=15>trolit</size></b></color>\n" +
+                               $"<color={secondary}><size=11><i>https://github.com/trolit</i></size></color> \n" +
+                               "---------------------------------------------------------------------------------\n\n" +
                                "Type <color=orange>help</color> for list of available commands. \n" +
                                "Type <color=orange>help <command></color> for command details. \n \n \n";
-
             CreateCommands();
         }
 
         private void CreateCommands()
         {
-            var commandHelp = CommandHelp.CreateCommand();
+            CommandHelp.CreateCommand();
+            
+            CommandGetKeyValue.CreateCommand();
 
-            var commandGetKeyValue = CommandGetKeyValue.CreateCommand();
+            CommandLoadScene.CreateCommand();
 
-            var commandLoadScene = CommandLoadScene.CreateCommand();
+            CommandSceneList.CreateCommand();
 
-            var commandSceneList = CommandSceneList.CreateCommand();
+            var commandClearList = CommandClearConsole.CreateCommand();
+            commandClearList.ConsoleTextRef = _consoleText;
+            commandClearList.ConsoleStartingInfo = _consoleText.text;
+
+            CommandSetPlayerSpeed.CreateCommand();
         }
 
         public static void AddCommandsToConsole(string name, ConsoleCommand command)
@@ -147,8 +168,13 @@ namespace Console
                     if (string.IsNullOrEmpty(_inputText.text) == false)
                     {
                         AddMessageToConsole(_inputText.text);
-
+                        
                         ParseInput(_inputText.text);
+
+                        if (_clipboardSize != 0)
+                        {
+                            StoreCommandInTheClipboard(_inputText.text);
+                        }
                     }
 
                     // Clears input
@@ -157,19 +183,100 @@ namespace Console
                     _consoleInput.ActivateInputField();
                     _consoleInput.Select();
                 }
+
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                {
+                    if (_clipboardSize != 0 && _clipboardIndexer != 0)
+                    {
+                        if (_clipboardCursor == _clipboardIndexer)
+                        {
+                            _clipboardCursor--;
+                            _consoleInput.text = _clipboard[_clipboardCursor];
+                        }
+                        else
+                        {
+                            if (_clipboardCursor > 0)
+                            {
+                                _clipboardCursor--;
+                                _consoleInput.text = _clipboard[_clipboardCursor];
+                            } else
+                            {
+                                _consoleInput.text = _clipboard[0];
+                            }
+                        }
+                        _consoleInput.caretPosition = _consoleInput.text.Length;
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    if (_clipboardSize != 0 && _clipboardIndexer != 0)
+                    {
+                        if (_clipboardCursor < _clipboardIndexer)
+                        {
+                            _clipboardCursor++;
+                            _consoleInput.text = _clipboard[_clipboardCursor];
+                            _consoleInput.caretPosition = _consoleInput.text.Length;
+                        }
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    int inputLength = _consoleInput.text.Length;
+                    
+                    if(inputLength >= _tabMinCharLength && _consoleInput.text.Any(char.IsWhiteSpace) == false)
+                    {
+                        foreach (var command in Commands)
+                        {
+                            string commandKey =
+                                command.Key.Length <= inputLength ? command.Key : command.Key.Substring(0, inputLength);
+
+                            if (_consoleInput.text.ToLower().StartsWith(commandKey.ToLower()))
+                            {
+                                _consoleInput.text = command.Key;
+                                
+                                _consoleInput.caretPosition = command.Key.Length;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 
             if (_consoleCanvas.gameObject.activeInHierarchy == false)
             {
                 _consoleInput.text = "";
             }
-
         }
 
         private IEnumerator ScrollDown()
         {
             yield return new WaitForSeconds(0.1f);
             _scrollRect.verticalNormalizedPosition = 0f;
+        }
+
+        private void StoreCommandInTheClipboard(string command)
+        {
+            _clipboard[_clipboardIndexer] = command;
+
+            if (_clipboardIndexer < _clipboardSize - 1)
+            {
+                _clipboardIndexer++;
+                _clipboardCursor = _clipboardIndexer;
+            } 
+            else if (_clipboardIndexer == _clipboardSize - 1)
+            {
+                // Clear clipboard & reset 
+                _clipboardIndexer = 0;
+                _clipboardCursor = 0;
+                for(int i = 0; i < _clipboardSize; i++)
+                {
+                    _clipboard[i] = string.Empty;
+                }
+
+                AddStaticMessageToConsole(ClipboardCleared);
+            }
         }
 
         private void AddMessageToConsole(string msg)
