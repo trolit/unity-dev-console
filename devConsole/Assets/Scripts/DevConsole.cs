@@ -199,6 +199,7 @@ namespace Console
                                 _consoleInput.text = _clipboard[0];
                             }
                         }
+                        _consoleInput.caretPosition = _consoleInput.text.Length;
                     }
                 }
 
@@ -210,6 +211,7 @@ namespace Console
                         {
                             _clipboardCursor++;
                             _consoleInput.text = _clipboard[_clipboardCursor];
+                            _consoleInput.caretPosition = _consoleInput.text.Length;
                         }
                     }
                 }
